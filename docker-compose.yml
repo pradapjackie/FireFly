@@ -1,0 +1,146 @@
+version: "3.3"
+services:
+
+  proxy:
+    image: traefik:v2.2
+    ports:
+      - "80:80"
+      - "8090:8080"
+    networks:
+      - traefik-public
+      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - --providers.docker
+      - --providers.docker.constraints=Label(`traefik.constraint-label-stack`, `${TRAEFIK_TAG?Variable not set}`)
+      - --providers.docker.exposedbydefault=false
+      - --accesslog
+      - --log
+      - --api
+      - --api.insecure=true
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.firefly-traefik-public-http.rule=Host(`${DOMAIN?Variable not set}`)
+      - traefik.http.services.firefly-traefik-public.loadbalancer.server.port=80
+    depends_on:
+      - flower
+      - backend
+      - frontend
+
+  db:
+    image: mysql:5
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    volumes:
+      - app-db-data:/var/lib/mysql
+    env_file:
+      - .env
+    command:
+      - --explicit_defaults_for_timestamp
+      - "--ignore-db-dir=lost+found"
+      - "--group_concat_max_len=15000"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+  flower:
+    image: mher/flower
+    ports:
+      - "5555:5555"
+    command: "celery --broker redis://redis flower"
+    networks:
+      - traefik-public
+      - default
+    env_file:
+      - .env
+  
+  backend:
+    image: backend
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      RUN_TEST_IN_MAIN_LOOP: "true"
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+    command: /start-reload.sh
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label-stack=${TRAEFIK_TAG?Variable not set}
+      - traefik.http.routers.firefly-backend-http.rule=PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`)
+      - traefik.http.services.firefly-backend.loadbalancer.server.port=80
+    networks:
+      - default
+
+  celeryworker1:
+    image: celeryworker
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      WORKER_NAME: "1_Worker"
+    env_file:
+      - .env
+    build:
+      context: ./backend
+      dockerfile: celeryworker.dockerfile
+  
+  frontend:
+    image: frontend
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_TEST_DEV_MODE="true"
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label-stack=${TRAEFIK_TAG?Variable not set}
+      - traefik.http.routers.firefly-frontend-http.rule=PathPrefix(`/`)
+      - traefik.http.services.firefly-frontend.loadbalancer.server.port=80
+
+  minio:
+    image: quay.io/minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ~/minio/data:/data
+    command: server /data --console-address ":9001"
+    env_file:
+      - .env
+    networks:
+      - default
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.50.0-noble
+    ports:
+      - "3010:3010"
+    working_dir: /home/pwuser
+    user: pwuser
+    command: >
+      /bin/sh -c "npx -y playwright@1.50.0 run-server --port 3010 --host 0.0.0.0"
+    restart: unless-stopped
+    networks:
+      - default 
+
+volumes:
+  app-db-data:
+  redis_data:
+
+networks:
+  traefik-public:
+    external: false

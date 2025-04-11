@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8' />
+  <link rel='shortcut icon' href='/favicon.ico' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta name='theme-color' content='#000000' />
+  <link rel='manifest' href='/manifest.json' />
+  <link
+    rel='stylesheet'
+    href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900'
+  />
+  <link
+    rel='stylesheet'
+    href='https://fonts.googleapis.com/css?family=Material+Icons'
+  />
+  <title>FireFly</title>
+  <style>
+    .root {
+      position: absolute;
+      background-color: #1a2038;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .loader {
+      display: inline-block;
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      left: 0;
+      right: 0;
+      top: calc(50% - 20px);
+      margin: auto;
+    }
+
+    .loader img {
+      position: absolute;
+      height: 25px;
+      width: auto;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+    }
+
+    .loader div {
+      box-sizing: border-box;
+      display: block;
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      margin: 0;
+      border: 3.4px solid #6a75c9;
+      border-radius: 50%;
+      animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      border-color: #6a75c9 transparent transparent transparent;
+    }
+
+    .loader div:nth-child(1) {
+      animation-delay: -0.45s;
+    }
+
+    .loader div:nth-child(2) {
+      animation-delay: -0.3s;
+    }
+
+    .loader div:nth-child(3) {
+      animation-delay: -0.15s;
+    }
+
+    @keyframes loader {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id='root' class='root'>
+  <div class='loader'>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</div>
+</body>
+</html>

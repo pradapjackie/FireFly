@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "target": "es6",
+    "paths": {
+      "assets/*": ["/public/assets/*"]
+  }
+},
+  "exclude": ["node_modules"]
+}
