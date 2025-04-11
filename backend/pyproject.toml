@@ -1,0 +1,83 @@
+[tool.poetry]
+name = "firefly-api"
+version = "1.0.0"
+description = ""
+authors = ["Oleg Gusak <oledjy@protonmail.com>"]
+packages = [
+    { include = "src" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.100.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+alembic = "^1.11.1"
+sqlalchemy = "^2.0.19"
+arsenic = "^21.8"
+redis = "^4.6.0"
+gql = "^3.4.1"
+grpcio = "^1.56.2"
+protobuf = "^4.23.4"
+tenacity = "^8.2.2"
+async-timeout = "^4.0.2"
+aiostream = "^0.4.5"
+yarl = "^1.9.2"
+phonenumbers = "^8.13.17"
+aiomcache = "^0.8.1"
+exrex = "^0.11.0"
+transliterate = "^1.10.2"
+zeep = {extras = ["async"], version = "^4.2.1"}
+httpx = "^0.24.1"
+pendulum = "^2.1.2"
+aiofiles = "^23.1.0"
+aiochclient = "^2.4.0"
+minio = "^7.1.15"
+pycryptodome = "^3.18.0"
+plotly = "^5.15.0"
+async-lru = "^2.0.3"
+self-limiters = "^0.4.0"
+bcrypt = "4.0.1"
+aiohttp = "^3.8.5"
+websockets = "^11.0.3"
+lxml = "^4.9.3"
+pytz = "^2023.3"
+multidict = "^6.0.4"
+celery = "^5.3.1"
+pydantic-settings = "^2.0.2"
+pymysql = "^1.1.0"
+uvicorn = {extras = ["standard"], version = "^0.23.1"}
+python-multipart = "^0.0.6"
+gunicorn = "^21.2.0"
+kaleido = "0.2.1"
+aiokafka = "^0.10.0"
+pyinstrument = "^5.0.0"
+openpyxl = "^3.1.5"
+playwright = "^1.50.0"
+objgraph = "^3.6.2"
+pydantic = {extras = ["email"], version = "^2.10.6"}
+aiomysql = "^0.2.0"
+asyncmy = "^0.2.10"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+isort = "^5.12.0"
+grpcio = "^1.56.2"
+grpcio-tools = "^1.56.2"
+protoletariat = "^3.2.14"
+dash = "^2.11.1"
+dash-bootstrap-components = "^1.4.2"
+deptry = "^0.12.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
